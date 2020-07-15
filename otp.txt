@@ -1,0 +1,85 @@
+------------------------------------- otp.py from the website with some modifications to retrieve b and real n ------------------------------------
+from random import seed, randint as w
+import time
+from pwn import *
+from binascii import unhexlify
+
+j = int
+u = j.to_bytes
+s = 73
+t = 479105856333166071017569
+_ = 1952540788
+s = 7696249
+o = 6648417
+m = 29113321535923570
+e = 199504783476
+_ = 7827278
+r = 435778514803
+a = 6645876
+n = 157708668092092650711139
+d = 2191175
+o = 2191175
+m = 7956567
+_ = 6648417
+m = 7696249
+e = 465675318387
+s = 4568741745925383538
+s = 2191175
+a = 1936287828
+g = 1953393000
+e = 29545
+
+g = b"rgbCTF{REDACTED}"  # TODO: when released as download, change to b"rgbCTF{REDACTED}"
+
+
+if __name__ == "__main__":
+    seed(int(time.time()))
+    print(f"Here's 10 numbers for you: ")
+    for _ in range(10):
+        print(w(5, 10000))
+    b = bytearray([w(0, 255) for _ in range(40)])
+    print ("b = ", end = "")
+    print ([i for i in b])         # same as the numbers from the server
+    n = int.from_bytes(bytearray([l ^ p for l, p in zip(g, b)]), 'little')
+    print("Here's another number I found: ", n)
+
+    # get n from the server
+    s = remote("challenge.rgbsec.xyz", 12345)
+    s.recvuntil("Here's another number I found:  ")
+    reply = s.recvall().decode("utf-8")
+    print (reply)
+
+
+
+------------------------------------- Output ---------------------------------------
+Here's 10 numbers for you:
+2707
+1925
+2920
+7207
+9519
+7890
+5338
+2721
+5613
+4513
+b = [144, 240, 192, 188, 34, 187, 15, 128, 32, 44, 122, 170, 101, 155, 167, 59, 85, 182, 10, 116, 135, 193, 248, 152, 189, 16, 116, 186, 210, 67, 173, 96, 42, 214, 17, 43, 34, 184, 51, 120]
+Here's another number I found:  94229117741125317760860633814544848866
+[+] Opening connection to challenge.rgbsec.xyz on port 12345: Done
+[+] Receiving all data: Done (69B)
+[*] Closed connection to challenge.rgbsec.xyz port 12345
+20964298177929786354953392950186603352577006454807318390095355221986
+
+
+------------------------------------- Solution -------------------------------------------
+>>> b = [144, 240, 192, 188, 34, 187, 15, 128, 32, 44, 122, 170, 101, 155, 167, 59, 85, 182, 10, 116, 135, 193, 248, 152, 189, 16, 116, 186, 210, 67, 173, 96, 42, 214, 17, 43, 34, 184, 51, 120]
+>>> n = 20964298177929786354953392950186603352577006454807318390095355221986
+>>> n = hex(n)[2:-1].decode("hex")      # get rid of 0x and L then decode
+>>> n = n[::-1]                         # because the flag was encrypted in little endian order so we have to reverse it
+>>> flag = ""
+>>> for i in range(len(n)):
+...     current = b[i] ^ ord(n[i])
+...     flag += chr(current)
+...
+>>> flag
+'rgbCTF{random_is_not_secure}'
