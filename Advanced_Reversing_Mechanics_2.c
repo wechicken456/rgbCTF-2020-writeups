@@ -1,3 +1,6 @@
+
+// Explanation of the script: https://medium.com/@tuztheultimatezed/rgbctf-writeup-advanced-reversing-mechanics-2-37a7d4d15534
+
 #include<stdio.h>
 #include<string.h>  // for strcpy
 
